@@ -1,0 +1,180 @@
+#Simple bank simulator
+import json
+
+class Customer:
+    year = 0
+    credit_to_give = 0
+    credit_money = 0
+    is_credit = False
+    is_deposit = False
+    deposit_money = 0
+    money_inbank = 0
+    def __init__(self, name = 'Dmytro',age = 25,salary = 25000,money = 50000):
+        self.name = name
+        self.age = age
+        self.salary = salary
+        self.money = money
+    def credit(self,creditt):
+        if self.is_credit == True:
+            return print('\nYou already have a credit\n')
+        self.is_credit = True
+        self.money = self.money + creditt
+        self.credit_to_give = creditt
+        self.credit_money = creditt
+        return print('\nYou`ve successfully taken a credit')
+    def pay_credit(self):
+        if self.is_credit == True:
+            if self.credit_to_give <= self.money:
+                self.money = self.money - self.credit_to_give
+                self.is_credit = False
+                self.credit_to_give = 0
+                self.credit_money = 0
+                return print('\nYou`ve successfully returned your credit')
+            else:
+                return print('\nYou don`t have enough money to return credit\n')
+        else:
+            return print('\nYou don`t have a credit\n')
+    def deposit(self,depositt):
+        if self.is_deposit == True:
+            return print('\nYou already have a deposit\n')
+        self.is_deposit = True
+        self.deposit_money = depositt
+        self.money_inbank = depositt
+        self.money -= depositt
+        return print('\nYou`ve successfully put some money in the bank')
+    def return_deposit(self):
+        if self.is_deposit == True:
+            self.money += self.money_inbank
+            self.deposit_money = 0
+            self.money_inbank = 0
+            self.is_deposit = False
+            return print('\nYou`ve successfully returned your money')
+        else:
+            return print('\nYou don`t have a deposit\n')
+    def skip_year(self):
+        self.year += 1
+        self.money += self.salary
+        if self.is_credit == True:
+            self.credit_to_give = self.credit_to_give + self.credit_money * 0.35
+        if self.is_deposit == True:
+            self.money_inbank += self.deposit_money*0.1
+        return print('\nYear skipped: {}\n{},{} y.o. has {}$\nCredit to give:'
+                     ' {}\nDeposit in the bank: {}\n'.format(self.year,self.name,self.age,
+                                                             self.money,self.credit_to_give,self.money_inbank))
+    def info(self):
+        return print('\nYear skipped: {}\n{},{} y.o. has {}$\nCredit to give:' \
+               ' {}\nDeposit in the bank: {}\n'.format(self.year,self.name,self.age,self.money,self.credit_to_give,
+                                                       self.money_inbank))
+    def SaveInData(self):
+         return {'Year':self.year, 'name' : self.name, 'age' : self.age, 'money' : self.money, 'credit_to_give' : self.credit_to_give, 'money_inbank': self.money_inbank,'is_deposit' : self.is_deposit, 'is_credit' : self.is_credit, 'deposit_money' : self.deposit_money, 'credit_money' : self.credit_money, 'salary' : self.salary}
+
+start = input('Type New to make a new customer, Take to take already made customer, or Info to show database: ').lower()
+while True:
+    if start == 'new':
+        try:
+            name = input('Type your name: ').lower()
+            age = int(input('Type your age: '))
+            salary = int(input('Type your salary: '))
+            money = int(input('Type your budget(money): '))
+            customer = Customer(name, age, salary, money)
+            break
+        except:
+            print('Smth went wrong, try one more time')
+    elif start == 'info':
+        with open('Database.txt', 'r') as information:
+            txt = information.read()
+            lst = json.loads(txt)
+        for person in lst:
+            print('\nCustomer #{}\nYear skipped: {}\n{},{} y.o. has {}$\nCredit to give:' \
+               ' {}\nDeposit in the bank: {}\n'.format(person['number'],person['Year'],person['name'],person['age'],person['money'],person['credit_to_give'],
+                                                       person['money_inbank']))
+        break
+    elif start == 'take':
+        with open('Database.txt', 'r') as information:
+            txt = information.read()
+            lst = json.loads(txt)
+        for person in lst:
+            print('\nCustomer #{}\nYear skipped: {}\n{},{} y.o. has {}$\nCredit to give:' \
+               ' {}\nDeposit in the bank: {}\n'.format(person['number'],person['Year'],person['name'],person['age'],person['money'],person['credit_to_give'],
+                                                       person['money_inbank']))
+        l = input('\nChoose the customer to continue(by typing its number)')
+        try:
+            take_d = -1
+            for i in lst:
+                if i['number'] == int(l):
+                    take_d = i
+            if take_d['number'] != -1:
+                customer = Customer(take_d['name'], take_d['age'], take_d['salary'], take_d['money'])
+                customer.is_credit = take_d['is_credit']
+                customer.is_deposit = take_d['is_deposit']
+                customer.year = take_d['Year']
+                customer.deposit_money = take_d['deposit_money']
+                customer.money_inbank = take_d['money_inbank']
+                customer.credit_money = take_d['credit_money']
+                customer.credit_to_give = take_d['credit_to_give']
+                break
+        except:
+            print('Smth went wrong, try one more time')
+
+
+    else:
+        print('Smth went wrong, try one more time')
+if start == 'new' or start == 'take':
+    x = input('Choose the option:\n'
+              '1)Take a credit\n2)Take a deposit\n3)Pay a credit\n4)Return a deposit\n5)Skip the year\n6)Request the info\n7)Finish\n')
+    while True:
+        if x == '1':
+            while True:
+                try:
+                    credit = int(input('\nAmount of money for credit: '))
+                    customer.credit(credit)
+                    x = input(
+                        '\n1)Take a credit\n2)Take a deposit\n3)Pay a credit\n4)Return a deposit\n5)Skip the year\n6)Request the info\n7)Finish\n')
+                    break
+                except:
+                    print('Smth went wrong, try one more time')
+        elif x == '2':
+            while True:
+                try:
+                    deposit = int(input('\nAmount of money for deposit: '))
+                    customer.deposit(deposit)
+                    x = input(
+                        '\n1)Take a credit\n2)Take a deposit\n3)Pay a credit\n4)Return a deposit\n5)Skip the year\n6)Request the info\n7)Finish\n')
+
+                    break
+                except:
+                    print('\nSmth went wrong, try one more time\n')
+        elif x == '3':
+            customer.pay_credit()
+            x = input(
+                '\n1)Take a credit\n2)Take a deposit\n3)Pay a credit\n4)Return a deposit\n5)Skip the year\n6)Request the info\n7)Finish\n')
+        elif x == '4':
+            customer.return_deposit()
+            x = input(
+                '\n1)Take a credit\n2)Take a deposit\n3)Pay a credit\n4)Return a deposit\n5)Skip the year\n6)Request the info\n7)Finish\n')
+        elif x == '5':
+            customer.skip_year()
+            x = input(
+                '\n1)Take a credit\n2)Take a deposit\n3)Pay a credit\n4)Return a deposit\n5)Skip the year\n6)Request the info\n7)Finish\n')
+        elif x == '6':
+            customer.info()
+            x = input(
+                '\n1)Take a credit\n2)Take a deposit\n3)Pay a credit\n4)Return a deposit\n5)Skip the year\n6)Request the info\n7)Finish\n')
+        elif x == '7':
+            with open('Database.txt', 'r') as new_file:
+                subtxt = new_file.read()
+                filetxt = json.loads(subtxt)
+                d = customer.SaveInData()
+                if start != 'take':
+                    d['number'] = len(filetxt) + 1
+                    filetxt.append(d)
+                else:
+                    idx = int(l) - 1
+                    d['number'] = int(l)
+                    filetxt[idx] = d
+            with open('Database.txt', 'w') as file:
+                file.write(json.dumps(filetxt))
+            break
+        else:
+            print('\nSmth went wrong, try one more time\n')
+
