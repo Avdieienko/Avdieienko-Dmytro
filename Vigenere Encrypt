@@ -1,0 +1,74 @@
+lst = 'abcdefghijklmnopqrstuvwxyz'
+symbols = [',','.','(',')','?','/','|','!','@','#','$','%','*',':',';','1','2','3','4','5','6','7','8','9','0','"',"'"]
+letters = list()
+for i in lst:
+    letters.append(i)
+
+
+
+def E_Vigenere():
+    word = input('Type the word to encrypt\n').lower()
+    key_word = input('Type the key word\n')
+    encrypt = list()
+    i = 0
+    j = 0
+    while True:
+        if word[i] not in symbols:
+            if word[i] != ' ':
+                idx = letters.index(word[i]) + letters.index(key_word[j%len(key_word)])
+                if idx>len(letters)-1:
+                    idx = idx - len(letters)
+                encrypt.append(letters[idx])
+                j+=1
+            else:
+                encrypt.append(word[i])
+        else:
+            encrypt.append(word[i])
+        i+=1
+        if i == len(word):
+            return ''.join(encrypt)
+    return ''.join(encrypt)
+
+def D_Vigenere():
+    word = input('\nType the word to decrypt\n').lower()
+    key_word = input('Type the key word\n')
+    encrypt = list()
+    i = 0
+    j = 0
+    while True:
+        if word[i] not in symbols:
+            if word[i] != ' ':
+                idx = letters.index(word[i]) - letters.index(key_word[j%len(key_word)])
+                if idx<0:
+                    idx = (letters.index(word[i])+26) - letters.index(key_word[j%len(key_word)])
+                encrypt.append(letters[idx])
+                j+=1
+            else:
+                encrypt.append(word[i])
+        else:
+            encrypt.append(word[i])
+        i+=1
+        if i == len(word):
+            return ''.join(encrypt)
+    return ''.join(encrypt)
+while True:
+    x = input('1)Encrypt\n2)Decrypt\n')
+    while True:
+        try:
+            if int(x) == 1:
+                print(E_Vigenere())
+                break
+            elif int(x) == 2:
+                print(D_Vigenere())
+                break
+            else:
+                x = input('\nYou have chosen the wrong number, try again\n1)Encrypt\n2)Decrypt\n')
+                continue
+        except:
+            x = input('\nYou have pressed smth wrong, try again\n1)Encrypt\n2)Decrypt\n')
+            continue
+    y = input('\nType F to start the programme from the beginning or just press Enter to exit it: ')
+    if y == 'f':
+        continue
+    else:
+        quit()
